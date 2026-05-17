@@ -1,0 +1,6 @@
+[tool.pytest.ini_options]
+markers = [
+    "unit: fast unit tests (no external services required)",
+    "integration: requires Kafka + MinIO via Docker Compose",
+]
+testpaths = ["tests"]
