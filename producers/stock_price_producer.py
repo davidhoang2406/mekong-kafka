@@ -8,7 +8,7 @@ from vnstock import Trading
 from market_data_models.coerce import coerce_float, coerce_int
 from market_data_models.message import build_envelope
 from market_data_models.topics import STOCK_PRICE_REALTIME
-from producers.base_producer import BaseProducer
+from model.base_producer import BaseProducer
 from producers.utils import (CIRCUIT_OPEN_SLEEP, CIRCUIT_THRESHOLD,
                               backoff_delay, load_json_config)
 

@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from market_data_models.coerce import coerce_float, coerce_int
 from market_data_models.schemas import PRICE_SNAPSHOT_AVRO_SCHEMA
 from market_data_models.topics import CRYPTO_PRICE_REALTIME, STOCK_PRICE_REALTIME
-from consumers.base_consumer import BaseConsumer
+from model.base_consumer import BaseConsumer
 from model.minio_store import MinioStore
 from producers.utils import asset_class
 

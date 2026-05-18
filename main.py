@@ -16,7 +16,7 @@ def main():
     if args.command == "smoke-producer":
         import json
         from market_data_models.message import build_envelope
-        from producers.base_producer import BaseProducer
+        from model.base_producer import BaseProducer
         from market_data_models.topics import STOCK_PRICE_REALTIME
 
         msg = build_envelope(
@@ -39,7 +39,7 @@ def main():
 
     elif args.command == "smoke-consumer":
         import json
-        from consumers.base_consumer import BaseConsumer
+        from model.base_consumer import BaseConsumer
         from market_data_models.topics import STOCK_PRICE_REALTIME
 
         print("Listening on stock.price.realtime — press Ctrl+C to stop.\n")
