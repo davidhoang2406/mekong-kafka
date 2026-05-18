@@ -8,4 +8,5 @@ build/
 .coverage
 .DS_Store
 .env
-.env.*.idea/
+.env.*
+.idea/
