@@ -7,3 +7,5 @@ build/
 .pytest_cache/
 .coverage
 .DS_Store
+.env
+.env.*
