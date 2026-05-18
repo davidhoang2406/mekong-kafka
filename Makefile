@@ -1,4 +1,4 @@
-.PHONY: install minio-init storage-flush \
+.PHONY: install \
         run-smoke-producer run-smoke-consumer \
         run-stock-price-producer run-crypto-price-producer run-storage-consumer \
         test test-unit test-integration
@@ -8,16 +8,6 @@ PYTHON := .venv/bin/python
 install: ## Create venv and install dependencies
 	python3.12 -m venv .venv
 	.venv/bin/pip install -r requirements.txt
-
-minio-init: ## Create MinIO buckets (safe to re-run)
-	PYTHONPATH=. $(PYTHON) db/init_minio.py
-
-storage-flush: ## Delete all objects from MinIO buckets (irreversible)
-	@echo "WARNING: this permanently deletes data."
-	@read -p "  Delete market-data? [y/n] " md; \
-	read -p "  Delete market-analysis? [y/n] " ma; \
-	if [ "$$md" = "y" ]; then PYTHONPATH=. $(PYTHON) db/flush_minio.py market-data; fi; \
-	if [ "$$ma" = "y" ]; then PYTHONPATH=. $(PYTHON) db/flush_minio.py market-analysis; fi
 
 run-smoke-producer: ## Send one hardcoded message to Kafka
 	PYTHONPATH=. $(PYTHON) main.py smoke-producer
