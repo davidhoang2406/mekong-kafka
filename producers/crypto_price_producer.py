@@ -9,7 +9,8 @@ from market_data_models.coerce import coerce_float, coerce_int
 from market_data_models.message import build_envelope
 from market_data_models.topics import CRYPTO_PRICE_REALTIME
 from producers.base_producer import BaseProducer
-from producers.utils import load_json_config
+from producers.utils import (CIRCUIT_OPEN_SLEEP, CIRCUIT_THRESHOLD,
+                              backoff_delay, load_json_config)
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -70,12 +71,23 @@ def run() -> None:
         "Starting crypto price producer | exchange=%s | symbols=%s | interval=%ds",
         exchange_id, symbols, interval,
     )
-
+    consecutive_failures = 0
     with BaseProducer() as producer:
         while True:
             try:
                 n = _publish_snapshot(producer, exchange_client, symbols, exchange_id)
                 log.info("Published %d crypto price snapshots → %s", n, TOPIC)
-            except Exception:
-                log.exception("Fetch failed — retrying in %ds", interval)
-            time.sleep(interval)
+                consecutive_failures = 0
+                time.sleep(interval)
+            except Exception as exc:
+                consecutive_failures += 1
+                if consecutive_failures >= CIRCUIT_THRESHOLD:
+                    log.error("Circuit open after %d consecutive failures — pausing %ds",
+                              consecutive_failures, CIRCUIT_OPEN_SLEEP)
+                    time.sleep(CIRCUIT_OPEN_SLEEP)
+                    consecutive_failures = 0
+                else:
+                    delay = backoff_delay(consecutive_failures)
+                    log.warning("Fetch failed (attempt %d): %s — retrying in %.1fs",
+                                consecutive_failures, exc, delay)
+                    time.sleep(delay)
