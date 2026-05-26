@@ -59,7 +59,7 @@ def run():
 
     log.info("Starting price producer | exchange=%s | symbols=%s | interval=%ds", exchange, symbols, interval)
     consecutive_failures = 0
-    with BaseProducer() as producer:
+    with BaseProducer(topic=TOPIC) as producer:
         while True:
             try:
                 n = _publish_snapshot(producer, symbols, exchange)

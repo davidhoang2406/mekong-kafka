@@ -32,7 +32,7 @@ def main():
                 "ask": 85100,
             },
         )
-        with BaseProducer() as p:
+        with BaseProducer(topic=STOCK_PRICE_REALTIME) as p:
             p.send(STOCK_PRICE_REALTIME, value=msg, key="VCB")
             p.flush()
         print(f"Sent to {STOCK_PRICE_REALTIME}:\n{json.dumps(msg, indent=2)}")
