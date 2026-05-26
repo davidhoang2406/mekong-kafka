@@ -72,7 +72,7 @@ def run() -> None:
         exchange_id, symbols, interval,
     )
     consecutive_failures = 0
-    with BaseProducer() as producer:
+    with BaseProducer(topic=TOPIC) as producer:
         while True:
             try:
                 n = _publish_snapshot(producer, exchange_client, symbols, exchange_id)
