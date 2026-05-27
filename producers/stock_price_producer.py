@@ -3,7 +3,7 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from vnstock import Trading
+from vnstock import Vnstock
 
 from market_data_models.coerce import coerce_float, coerce_int
 from market_data_models.message import build_envelope
@@ -21,24 +21,27 @@ CONFIG = Path(__file__).parent.parent / "config" / "stocks.json"
 
 
 def _publish_snapshot(producer: BaseProducer, symbols: list, default_exchange: str) -> int:
-    df = Trading(source="KBS").price_board(symbols)
+    df = Vnstock(source="VCI", show_log=False).stock(symbol=symbols[0]).trading.price_board(symbols_list=symbols)
     if df is None or df.empty:
         log.warning("price_board returned empty result")
         return 0
 
     count = 0
     for _, row in df.iterrows():
-        r = row.to_dict()
+        match_price = coerce_float(row[("match", "match_price")])
+        ref_price   = coerce_float(row[("listing", "ref_price")])
+        change      = round(match_price - ref_price, 2) if match_price and ref_price else None
+        pct_change  = round(change / ref_price * 100, 2) if change and ref_price else None
 
-        symbol   = str(r.get("symbol", "UNKNOWN")).upper()
-        exchange = str(r.get("exchange") or default_exchange).upper()
+        symbol   = str(row[("listing", "symbol")] or "UNKNOWN").upper()
+        exchange = str(row[("listing", "exchange")] or default_exchange).upper()
         payload = {
-            "price":      coerce_float(r.get("close_price")),
-            "change":     coerce_float(r.get("price_change")),
-            "pct_change": coerce_float(r.get("percent_change")),
-            "volume":     coerce_int(r.get("volume_accumulated")),
-            "bid":        coerce_float(r.get("bid_price_1")),
-            "ask":        coerce_float(r.get("ask_price_1")),
+            "price":      match_price,
+            "change":     change,
+            "pct_change": pct_change,
+            "volume":     coerce_int(row[("match", "accumulated_volume")]),
+            "bid":        coerce_float(row[("bid_ask", "bid_1_price")]),
+            "ask":        coerce_float(row[("bid_ask", "ask_1_price")]),
         }
         producer.send(
             TOPIC,
