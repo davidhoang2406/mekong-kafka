@@ -29,9 +29,14 @@ def _publish_snapshot(producer: BaseProducer, symbols: list, default_exchange: s
     count = 0
     for _, row in df.iterrows():
         match_price = coerce_float(row[("match", "match_price")])
-        ref_price   = coerce_float(row[("listing", "ref_price")])
-        change      = round(match_price - ref_price, 2) if match_price and ref_price else None
-        pct_change  = round(change / ref_price * 100, 2) if change and ref_price else None
+        if not match_price:
+            log.debug("Skipping %s — no live price (market closed?)",
+                      row.get(("listing", "symbol"), "?"))
+            continue
+
+        ref_price  = coerce_float(row[("listing", "ref_price")])
+        change     = round(match_price - ref_price, 2) if ref_price else 0.0
+        pct_change = round(change / ref_price * 100, 2) if ref_price else 0.0
 
         symbol   = str(row[("listing", "symbol")] or "UNKNOWN").upper()
         exchange = str(row[("listing", "exchange")] or default_exchange).upper()
