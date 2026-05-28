@@ -40,8 +40,8 @@ def _publish_snapshot(producer: BaseProducer, symbols: list, default_exchange: s
             "change":     change,
             "pct_change": pct_change,
             "volume":     coerce_int(row[("match", "accumulated_volume")]),
-            "bid":        coerce_float(row[("bid_ask", "bid_1_price")]),
-            "ask":        coerce_float(row[("bid_ask", "ask_1_price")]),
+            "bid":        coerce_float(row.get(("bid_ask", "bid_1_price"))),
+            "ask":        coerce_float(row.get(("bid_ask", "ask_1_price"))),
         }
         producer.send(
             TOPIC,
