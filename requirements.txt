@@ -1,4 +1,4 @@
-market-data-models @ git+https://github.com/davidhoang2406/mekong-data-models.git
+market-data-models @ git+https://github.com/davidhoang2406/mekong-data-models.git@ad7581c71d4989b6db2bd139c2df4604d634ed16
 kafka-python==2.3.1
 fastavro>=1.9
 pyarrow>=16.0
