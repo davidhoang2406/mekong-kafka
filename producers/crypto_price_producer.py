@@ -10,7 +10,8 @@ from market_data_models.message import build_envelope
 from market_data_models.topics import CRYPTO_PRICE_REALTIME
 from model.base_producer import BaseProducer
 from producers.utils import (CIRCUIT_OPEN_SLEEP, CIRCUIT_THRESHOLD,
-                              backoff_delay, load_json_config)
+                              backoff_delay, is_transient_network_error,
+                              load_json_config)
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -80,6 +81,11 @@ def run() -> None:
                 consecutive_failures = 0
                 time.sleep(interval)
             except Exception as exc:
+                if is_transient_network_error(exc):
+                    delay = backoff_delay(max(consecutive_failures, 1))
+                    log.warning("Transient network error (DNS) — not counting toward circuit: %s — retrying in %.1fs", exc, delay)
+                    time.sleep(delay)
+                    continue
                 consecutive_failures += 1
                 if consecutive_failures >= CIRCUIT_THRESHOLD:
                     log.error("Circuit open after %d consecutive failures — pausing %ds",
