@@ -1,5 +1,26 @@
 {
   "exchange": "binance",
-  "symbols": ["BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT"],
+  "symbols": [
+    "BTC/USDT",
+    "ETH/USDT",
+    "BNB/USDT",
+    "SOL/USDT",
+    "XRP/USDT",
+    "DOGE/USDT",
+    "ADA/USDT",
+    "AVAX/USDT",
+    "SHIB/USDT",
+    "DOT/USDT",
+    "MATIC/USDT",
+    "LINK/USDT",
+    "LTC/USDT",
+    "TRX/USDT",
+    "UNI/USDT",
+    "ATOM/USDT",
+    "TON/USDT",
+    "BCH/USDT",
+    "NEAR/USDT",
+    "APT/USDT"
+  ],
   "poll_interval_seconds": 5
 }
