@@ -16,7 +16,11 @@
     "LTC/USDT",
     "TRX/USDT",
     "UNI/USDT",
-    "ATOM/USDT"
+    "ATOM/USDT",
+    "TON/USDT",
+    "BCH/USDT",
+    "NEAR/USDT",
+    "APT/USDT"
   ],
   "poll_interval_seconds": 5
 }
